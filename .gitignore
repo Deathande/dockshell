@@ -1,0 +1,4 @@
+*.swp
+docksh # old name
+dsh    # new name
+*.o
