@@ -4,10 +4,13 @@ LFLAGS=
 
 all: docksh
 
-docksh: main.o
+docksh: main.o mycommands.o
 	$(CC) $(LFLAGS) $+ -o $@
 
 main.o: main.c
+	$(CC) -c $(CFLAGS) $<
+
+mycommands.o: mycommands.c mycommands.h
 	$(CC) -c $(CFLAGS) $<
 
 clean:
