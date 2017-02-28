@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <signal.h>
 #include "mycommands.h"
 
 char* ps1 = "$ ";
@@ -28,13 +29,14 @@ void get_in()
   read(STDIN_FILENO, buffer, 512);
 
   strcpy(input, buffer);
+  //memset(buffer, 0, 512);
   // Strip new line from input
   if ((nl=strchr(input, '\n')) != NULL)
     *nl = '\0';
-
   tokenize(input, &tokens, &num_tok);
   run_cmd(tokens, num_tok);
 
+  memset(input, 0, 512);
   free(tokens);
 }
 
@@ -50,15 +52,14 @@ void run_cmd(char** toks, unsigned int size)
   }
   else if (strcmp(toks[0], "cp") == 0)
   {
-    printf("TODO: implement cp\n");
+    cp(size, toks);
   }
   else if (strcmp(toks[0], "grep") == 0)
   {
-    printf("TODO: implement grep\n");
+    grep(size, toks);
   }
   else if (strcmp(toks[0], "clear") == 0)
   {
-    //printf("TODO: Implement clear\n");
     clear(size, toks);
   }
   else if (strcmp(toks[0], "exit") == 0)
