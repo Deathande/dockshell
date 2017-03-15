@@ -21,7 +21,7 @@ int grep(int num_args, char** args)
 {
   if (num_args < 3)
   {
-    printf("Usage: %s <file> <keyword>", args[0]);
+    printf("Usage: %s <keyword> <file>", args[0]);
     return 0;
   }
 
@@ -29,21 +29,27 @@ int grep(int num_args, char** args)
   unsigned int line_number = 0;
   char line[512];
 
-  fp = fopen(args[1], "r");
-  if (fp == NULL)
+  for (int i = 2; i < num_args; i++)
   {
-    perror("Could not open file");
-    return 1;
-  }
+    fp = fopen(args[i], "r");
+    printf("%s\n", args[i]);
+    if (fp == NULL)
+    {
+      perror("Could not open file");
+      return 1;
+    }
 
-  while (fgets(line, 512, fp))
-  {
-    if (strstr(line, args[2]) != NULL)
-      printf("%d: %s", line_number, line);
+    while (fgets(line, 512, fp))
+    {
+      if (strstr(line, args[1]) != NULL)
+      {
+        printf("%d: %s", line_number, line);
+      }
+    }
+    printf("\n");
+    fclose(fp);
   }
-
-  fclose(fp);
-  return 1;
+  return 0;
 }
 
 int cp(int num_args, char** args)
@@ -77,7 +83,7 @@ int cp(int num_args, char** args)
 
 int cat(int num_args, char** args)
 {
-  printf("%d\n", num_args);
+  //printf("%d\n", num_args);
   if (num_args < 2)
   {
     printf("Usage: %s <filename>", args[0]);
@@ -104,10 +110,7 @@ int cat(int num_args, char** args)
 
 int clear(int size, char** args)
 {
-  // This is almost right
-  struct winsize w;
-  ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-  for (int i = 0; i < w.ws_row; i++)
-    printf("\n");
+  printf("\033[2J\033[0;0f");
+  fflush(stdout); // may not clear riht away without clearing the buffer
   return 0;
 }
