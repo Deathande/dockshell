@@ -53,13 +53,12 @@ int grep(int num_args, char** args)
       printf("Error: Expected \"");
       return 1;
     }
-   printf("%s\n", ss);
   }
 
   for (int i = index; i < num_args; i++)
   {
     fp = fopen(args[i], "r");
-    //printf("%s\n", args[i]);
+    printf("%s\n", args[i]);
     if (fp == NULL)
     {
       perror("Could not open file");
