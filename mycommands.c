@@ -24,15 +24,42 @@ int grep(int num_args, char** args)
     printf("Usage: %s <keyword> <file>", args[0]);
     return 0;
   }
+  //printf("%s\n", args[1]);
 
   FILE* fp = NULL;
   unsigned int line_number = 0;
   char line[512];
+  char ss[150] = "\0";
+  char arg1[50];
+  int index = 2;
 
-  for (int i = 2; i < num_args; i++)
+  if (args[1][0] == '\"')
+  {
+    for (int i = 0; i < strlen(args[1]); i++)
+    {
+      arg1[i] = args[1][i+1];
+    }
+    strcat(ss, arg1);
+    char* c;
+    while(index < num_args && (c=strchr(args[index], '\"')) != NULL)
+    {
+      *c = '\0';
+      strcat(ss, " ");
+      strcat(ss, args[index]);
+      index++;
+    }
+    if (index == num_args)
+    {
+      printf("Error: Expected \"");
+      return 1;
+    }
+   printf("%s\n", ss);
+  }
+
+  for (int i = index; i < num_args; i++)
   {
     fp = fopen(args[i], "r");
-    printf("%s\n", args[i]);
+    //printf("%s\n", args[i]);
     if (fp == NULL)
     {
       perror("Could not open file");
@@ -41,7 +68,7 @@ int grep(int num_args, char** args)
 
     while (fgets(line, 512, fp))
     {
-      if (strstr(line, args[1]) != NULL)
+      if (strstr(line, ss) != NULL)
       {
         printf("%d: %s", line_number, line);
       }

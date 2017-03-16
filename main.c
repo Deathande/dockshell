@@ -91,7 +91,7 @@ void tokenize(char* str, char*** tokens, unsigned int* size)
     i++;
   }
 
-  i--;
-  *tokens = realloc(*tokens, i);
-  *size = i;
+  //i--;
+  //*tokens = realloc(*tokens, i);
+  *size = i-1;
 }
