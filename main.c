@@ -25,6 +25,7 @@ int main(int argc, char** argv)
     if ((nl=strchr(input, '\n')) != NULL)
       *nl = '\0';
     tokenize(input, &tokens, &num_tok);
+    printf("%s\n", tokens[0]);
     parse(tokens, num_tok);
 
     memset(input, 0, 512);

@@ -2,23 +2,41 @@
 
 void tokenize(char* str, char*** tokens, unsigned int* size)
 {
-  char* token;
+  char token[50];
   int i = 0;
+  int num_tok = 0;
 
   *tokens = malloc(sizeof(char*));
 
-  token = strtok(str, " ");
-  (*tokens)[i] = token;
-  i++;
-  while (token != NULL)
+  while (i < strlen(str))
   {
+    i = skip_whitespace(str, i);
     *tokens = realloc(*tokens, (i+1) * sizeof(char*));
-    token = strtok(NULL, " ");
-    (*tokens)[i] = token;
-    i++;
+    int ii = 0;
+    while (ii+i < strlen(str) && str[ii+i] != ' ')
+    {
+      token[ii] = str[ii+i];
+      ii++;
+    }
+    token[ii] = '\0';
+    (*tokens)[num_tok] = token;
+    printf("%s\n", (*tokens)[num_tok]);
+    i += ii;
+    num_tok++;
   }
 
-  *size = i-1;
+  //i--;
+  //*tokens = realloc(*tokens, i);
+  *size = num_tok;
+}
+
+int skip_whitespace(char* str, int pos)
+{
+  while ((pos < strlen(str) && (str[pos] == ' ')))
+  {
+    pos++;
+  }
+  return pos;
 }
 
 void parse(char** toks, unsigned int size)

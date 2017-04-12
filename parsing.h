@@ -8,8 +8,7 @@
 #include "mycommands.h"
 
 void tokenize(char*, char***, unsigned int*);
-char** parse_args(char**, int);
-char* get_string(char**, int, int);
 void parse(char**, unsigned int);
+int skip_whitespace(char* str, int pos);
 
 #endif
