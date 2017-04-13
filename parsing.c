@@ -12,12 +12,13 @@ void tokenize(char* str, char*** tokens, unsigned int* size)
     int ii = 0;
     if (str[i] == '\"')
     {
-      i++; // ignore the '"'
+      i++; // ignore the first '"'
       while (i+ii < strlen(str) && str[i+ii] != '\"')
       {
         (*tokens)[*size][ii] = str[i+ii];
         ii++;
       }
+      i++; // ignore the last '"'
     }
     else
     {

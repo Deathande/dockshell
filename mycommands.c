@@ -30,30 +30,7 @@ int grep(int num_args, char** args)
   unsigned int line_number = 0;
   char line[512];
   char ss[150] = "\0";
-  char arg1[50];
   int index = 2;
-
-  if (args[1][0] == '\"')
-  {
-    for (int i = 0; i < strlen(args[1]); i++)
-    {
-      arg1[i] = args[1][i+1];
-    }
-    strcat(ss, arg1);
-    char* c;
-    while(index < num_args && (c=strchr(args[index], '\"')) != NULL)
-    {
-      *c = '\0';
-      strcat(ss, " ");
-      strcat(ss, args[index]);
-      index++;
-    }
-    if (index == num_args)
-    {
-      printf("Error: Expected \"");
-      return 1;
-    }
-  }
 
   for (int i = index; i < num_args; i++)
   {
