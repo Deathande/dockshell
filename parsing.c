@@ -8,12 +8,24 @@ void tokenize(char* str, char*** tokens, unsigned int* size)
   while (i < strlen(str))
   {
     i = skip_whitespace(str, i);
-    int ii = 0;
     (*tokens)[*size] = malloc(sizeof(char) * 100);
-    while (i+ii < strlen(str) && str[i+ii] != ' ')
+    int ii = 0;
+    if (str[i] == '\"')
     {
-      (*tokens)[*size][ii] = str[i+ii];
-      ii++;
+      i++; // ignore the '"'
+      while (i+ii < strlen(str) && str[i+ii] != '\"')
+      {
+        (*tokens)[*size][ii] = str[i+ii];
+        ii++;
+      }
+    }
+    else
+    {
+      while (i+ii < strlen(str) && str[i+ii] != ' ')
+      {
+        (*tokens)[*size][ii] = str[i+ii];
+        ii++;
+      }
     }
     i += ii;
     *size += 1;
