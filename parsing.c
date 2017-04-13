@@ -74,6 +74,18 @@ void parse(char** toks, unsigned int size)
   {
     cd(size, toks);
   }
+  else if (strcmp(toks[0], "mkdir") == 0)
+  {
+    mkdir_builtin(size, toks);
+  }
+  else if (strcmp(toks[0], "rmdir") == 0)
+  {
+    rmdir_builtin(size, toks);
+  }
+  else if (strcmp(toks[0], "stat") == 0)
+  {
+    stat_builtin(size, toks);
+  }
   else
   {
     printf("Unknwon command\n");

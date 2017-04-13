@@ -113,11 +113,13 @@ int cat(int num_args, char** args)
 
 int clear(int size, char** args)
 {
+  // This is the character sequence that will clear the terminal
   printf("\033[2J\033[0;0f");
   fflush(stdout); // may not clear riht away without clearing the buffer
   return 0;
 }
 
+/* TODO: Implement `cd ~` */
 int cd (int size, char** args)
 {
   if (size < 2)
@@ -127,5 +129,66 @@ int cd (int size, char** args)
   }
   if(chdir(args[1]) < 0)
     return 1;
+  return 0;
+}
+
+int mkdir_builtin (int size, char** args)
+{
+  if (size < 2)
+  {
+    printf("Too few arguments\n");
+    return 0;
+  }
+  if (mkdir(args[1], 0777) < 0)
+  {
+    printf("Failed to create directory %s\n", args[1]);
+    return -1;
+  }
+  return 0;
+}
+
+int rmdir_builtin (int size, char** args)
+{
+  if (size < 2)
+  {
+    printf("Too few arguments\n");
+    return 0;
+  }
+  if (rmdir(args[1]) < 0)
+  {
+    printf("Failed to remove directory %s\n", args[1]);
+    return -1;
+  }
+  return 0;
+}
+
+int stat_builtin (int size, char** args)
+{
+  struct stat* buffer;
+  buffer = malloc(sizeof(struct stat));
+  if (size < 2)
+  {
+    printf("Too few arguments\n");
+    return 0;
+  }
+  if (stat(args[1], buffer) < 0)
+  {
+    printf("could not retrieve file info\n");
+    return -1;
+  }
+  /*printf("File: %s\n
+          Size: %d            Blocks: %d           IO Blocks: %d\n
+          Device: %");*/
+  printf("File: %s\n", args[1]);
+  printf("Size: %d Blocks: %d IO Blocks: %d\n",
+         (int)buffer->st_size, 
+         (int)buffer->st_blocks,
+         (int)buffer->st_blksize);
+  printf("Device: %d Inode: %d Links: %d\n",
+          (int)buffer->st_dev,
+          (int)buffer->st_ino,
+          (int)buffer->st_nlink);
+  printf("Access:\n");
+  // TODO: More to this...
   return 0;
 }
