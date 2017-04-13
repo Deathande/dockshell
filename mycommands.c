@@ -117,3 +117,15 @@ int clear(int size, char** args)
   fflush(stdout); // may not clear riht away without clearing the buffer
   return 0;
 }
+
+int cd (int size, char** args)
+{
+  if (size < 2)
+  {
+    printf("too few arguments");
+    return 0;
+  }
+  if(chdir(args[1]) < 0)
+    return 1;
+  return 0;
+}
