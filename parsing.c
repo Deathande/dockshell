@@ -28,6 +28,7 @@ void tokenize(char* str, char*** tokens, unsigned int* size)
         ii++;
       }
     }
+    (*tokens)[*size][ii] = '\000';
     i += ii;
     *size += 1;
   }
@@ -68,6 +69,10 @@ void parse(char** toks, unsigned int size)
   {
     printf("exit\n");
     exit(0);
+  }
+  else if (strcmp(toks[0], "cd") == 0)
+  {
+    cd(size, toks);
   }
   else
   {
