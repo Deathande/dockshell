@@ -192,3 +192,15 @@ int stat_builtin (int size, char** args)
   // TODO: More to this...
   return 0;
 }
+
+int sleep_builtin(int size, char** args)
+{
+  if (size < 2)
+  {
+    printf("Please specify a time\n");
+    return 0;
+  }
+  unsigned int time;
+  time = strtol(args[1], 10);
+  sleep(time);
+}

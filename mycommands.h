@@ -26,7 +26,7 @@ int diff          (int num_args, char** args);
 int env           (int num_args, char** args);
 int timeout       (int num_args, char** args);
 //int wait    (int num_args, char** args);
-//int sleep   (int num_args, char** args);
+int sleep_builtin   (int num_args, char** args);
 //int kill    (int num_args, char** args);
 
 #endif
