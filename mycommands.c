@@ -336,20 +336,117 @@ int diff (int size, char** args)
     printf("Too few arguments\n");
     return 0;
   }
+
+  const unsigned int buffer_size = 512;
+  const unsigned int up          = 1;
+  const unsigned int left        = 2;
+  const unsigned int diag        = 3;
+
   FILE* fp1;
   FILE* fp2;
-  unsigned int ln = 0;
   unsigned int ln1 = 0;
   unsigned int ln2 = 0;
-  char line[512];
+  char line1[buffer_size];
+  char line2[buffer_size];
 
   fp1 = fopen(args[1], "r");
   fp2 = fopen(args[2], "r");
+  if (fp1 == NULL)
+  {
+    printf("Error opening %s\n", args[1]);
+    return -1;
+  }
+  if (fp2 == NULL)
+  {
+    printf("Error opening %s\n", args[2]);
+    return -1;
+  }
 
-  while (fgets(line, 512, fp1))
+  while (fgets(line1, buffer_size, fp1))
     ln1++;
-  while (fgets(line, 512, fp2))
+  while (fgets(line1, buffer_size, fp2))
     ln2++;
+
+  unsigned int lcs_length[ln1+1][ln2+1];
+  unsigned int trace[ln1+1][ln2+1];
+  char* text1[ln1];
+  char* text2[ln2];
+
+  // fp1 is top
+  for (int i = 0; i < ln1; i++)
+  {
+    lcs_length[0][i] = 0;
+    trace[0][i] = 0;
+  }
+
+  // fp2 is left
+  for (int i = 0; i < ln2; i++)
+  {
+    lcs_length[i][0] = 0;
+    trace[i][0] = 0;
+  }
+
+  for (int i = 1; i < ln1+1; i++)
+  {
+    fgets(line1, buffer_size, fp1);
+    text1[i] = line1;
+    for (int j = 1; j < ln2+1; j++)
+    {
+      fgets(line2, buffer_size, fp2);
+      text2[j] = line2;
+      printf("line1: %sline2: %s", line1, line2);
+      int cmp = strcmp(line1, line2);
+      if (cmp == 0)
+      {
+        //printf("same\n");
+        trace[i][j] = diag;
+        lcs_length[i][j] = lcs_length[i-1][j-1] + 1;
+      }
+      else if (lcs_length[i-1][j] >= lcs_length[i][j-1])
+      {
+        //printf("up\n");
+        lcs_length[i][j] = lcs_length[i-1][j];
+        trace[i][j] = up;
+      }
+      else
+      {
+        //printf("left\n");
+        lcs_length[i][j] = lcs_length[i][j-1];
+        trace[i][j] = left;
+      }
+    }
+  }
+
+  int index_i = ln1+1;
+  int index_j = ln2+1;
+  char output[(ln1 > ln2) ? ln1 : ln2][buffer_size];
+
+  while (trace[index_i][index_j] != 0)
+  {
+    int direction = trace[index_i][index_j];
+    if (direction == up)
+    {
+      printf("%s\n-----%s\n", text1[index_i], text2[index_j]);
+      sprintf(output[(ln1 < ln2) ? ln1 : ln2], "%s\n---%s\n", text1[index_i], text2[index_j]);
+      index_i--;
+    }
+    else if (direction == left)
+    {
+      printf("%s\n-----%s\n", text1[index_i], text2[index_j]);
+      sprintf(output[(ln1 < ln2) ? ln1 : ln2], "%s\n---%s\n", text1[index_i], text2[index_j]);
+      index_j--;
+    }
+    else
+    {
+      output[(ln1 < ln2) ? ln1 : ln2][0] = '\0';
+      index_i--;
+      index_j--;
+    }
+  }
+
+  printf("%d\n", (ln1 > ln2) ? ln1:ln2);
+  for (int i = (ln1 > ln2) ? ln1 : ln2; i > 0; i--)
+    printf("%s", output[i]);
 
   return 0;
 }
