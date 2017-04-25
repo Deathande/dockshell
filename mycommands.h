@@ -9,6 +9,9 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <signal.h>
+#include <sys/wait.h>
+#include "parsing.h"
 
 /* Phase 1 */
 int cat     (int num_args, char** args);
@@ -27,6 +30,6 @@ int env           (int num_args, char** args);
 int timeout       (int num_args, char** args);
 //int wait    (int num_args, char** args);
 int sleep_builtin   (int num_args, char** args);
-//int kill    (int num_args, char** args);
+int kill_builtin    (int num_args, char** args);
 
 #endif

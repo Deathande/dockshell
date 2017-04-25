@@ -86,6 +86,26 @@ void parse(char** toks, unsigned int size)
   {
     stat_builtin(size, toks);
   }
+  else if (strcmp(toks[0], "sleep") == 0)
+  {
+    sleep_builtin(size, toks);
+  }
+  else if (strcmp(toks[0], "env") == 0)
+  {
+     env(size, toks);
+  }
+  else if (strcmp(toks[0], "kill") == 0)
+  {
+    kill_builtin(size, toks);
+  }
+  else if (strcmp(toks[0], "timeout") == 0)
+  {
+    timeout(size, toks);
+  }
+  else if (strcmp(toks[0], "diff") == 0)
+  {
+    diff(size, toks);
+  }
   else
   {
     printf("Unknwon command\n");

@@ -201,6 +201,155 @@ int sleep_builtin(int size, char** args)
     return 0;
   }
   unsigned int time;
-  time = strtol(args[1], 10);
-  sleep(time);
+  time = strtol(args[1], NULL, 10);
+  return sleep(time);
+}
+
+int env( int num_args, char** args)
+{
+  char commands[60][50] = {
+    "LD_LIBRARY_PATH\0",
+    "CSF_UnitsDefinition\0",
+    "CSF_GraphicShr\0",
+    "TERMINATOR_UUID\0",
+    "ANDROID_HOME\0",
+    "XDG_MENU_PREFIX\0",
+    "CSF_EXCEPTION_PROMPT\0",
+    "LANG\0",
+    "DISPLAY\0",
+    "OLDPWD\0",
+    "COLORTERM\0",
+    "MOZ_PLUGIN_PATH\0",
+    "CSF_IGESDefaults\0",
+    "CSF_XCAFDefaults\0",
+    "XDG_VTNR\0",
+    "GIO_LAUNCHED_DESKTOP_FILE_PID\0",
+    "SSH_AUTH_SOCK\0",
+    "CSF_STEPDefaults\0",
+    "XDG_SESSION_ID\0",
+    "CSF_XSMessage\0",
+    "USER\0",
+    "QT_QPA_PLATFORMTHEME\0",
+    "PWD\0",
+    "HOME\0",
+    "TMUX\0",
+    "CSF_PluginDefaults\0",
+    "XDG_DATA_DIRS\0",
+    "TERMINATOR_DBUS_NAME\0",
+    "CSF_StandardDefaults\0",
+    "GJS_DEBUG_OUTPUT\0",
+    "CSF_StandardLiteDefaults\0",
+    "MMGT_CLEAR\0",
+    "CSF_UnitsLexicon\0",
+    "GTK_MODULES\0",
+    "TERMINATOR_DBUS_PATH\0",
+    "MAIL\0",
+    "WINDOWPATH\0",
+    "CSF_XmlOcafResource\0",
+    "VTE_VERSION\0",
+    "TERM\0",
+    "SHELL\0",
+    "XDG_CURRENT_DESKTOP\0",
+    "ANDROID_SWT\0",
+    "CASROOT\0",
+    "GIO_LAUNCHED_DESKTOP_FILE\0",
+    "TMUX_PANE\0",
+    "XDG_SEAT\0",
+    "SHLVL\0",
+    "GNOME_DESKTOP_SESSION_ID\0",
+    "LOGNAME\0",
+    "DBUS_SESSION_BUS_ADDRESS\0",
+    "XDG_RUNTIME_DIR\0",
+    "CSF_MDTVTexturesDirectory\0",
+    "XAUTHORITY\0",
+    "PATH\0",
+    "CSF_LANGUAGE\0",
+    "GJS_DEBUG_TOPICS\0",
+    "SESSION_MANAGER\0",
+    "CSF_SHMessage\0",
+    "_\0"
+  };
+  char* out;
+
+  for(int i = 0; i < 60; i++)
+  {
+    out = getenv(commands[i]);
+    printf("%s=%s\n", commands[i], out);
+  }
+  return 0;
+}
+
+int kill_builtin(int size, char** args)
+{
+  if (size < 2)
+  {
+    printf("Please specify a pid\n");
+    return 0;
+  }
+  unsigned int pid;
+  pid = strtol(args[1], NULL, 10);
+  return kill(pid, SIGKILL);
+}
+
+// TODO: Needs work
+int timeout(int size, char** args)
+{
+  pid_t pid = fork();
+  if (pid == 0)
+  {
+    // child
+    exit(0);
+    char* child_args[50];
+    for (int i = 2; i < size; i++)
+    {
+      child_args[i-2] = args[i];
+      printf("%s\n", child_args[i-2]);
+    }
+    parse(child_args, size - 2);
+    while (1) {}
+  }
+  else
+  {
+    // parent
+    int time;
+    time = strtol(args[1], NULL, 10);
+    sleep(time);
+    int status;
+    pid_t c_status = waitpid(pid, &status, WNOHANG);
+    printf("c_status: %d\n", c_status);
+    printf("status: %d\n", status);
+    if (c_status == 0)
+    {
+      kill(pid);
+      printf("Child terminated\n");
+    }
+  }
+  if (pid == 0)
+    printf("here\n");
+  return 0;
+}
+
+int diff (int size, char** args)
+{
+  if (size < 3)
+  {
+    printf("Too few arguments\n");
+    return 0;
+  }
+  FILE* fp1;
+  FILE* fp2;
+  unsigned int ln = 0;
+  unsigned int ln1 = 0;
+  unsigned int ln2 = 0;
+  char line[512];
+
+  fp1 = fopen(args[1], "r");
+  fp2 = fopen(args[2], "r");
+
+  while (fgets(line, 512, fp1))
+    ln1++;
+  while (fgets(line, 512, fp2))
+    ln2++;
+
+  return 0;
 }
