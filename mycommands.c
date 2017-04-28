@@ -373,18 +373,21 @@ int diff (int size, char** args)
   char* text2[ln2];
 
   // fp1 is top
-  for (int i = 0; i < ln1; i++)
+  for (int i = 0; i < ln1+1; i++)
+  {
+    lcs_length[i][0] = 0;
+    trace[i][0] = 0;
+  }
+
+  // fp2 is left
+  for (int i = 0; i < ln2+1; i++)
   {
     lcs_length[0][i] = 0;
     trace[0][i] = 0;
   }
 
-  // fp2 is left
-  for (int i = 0; i < ln2; i++)
-  {
-    lcs_length[i][0] = 0;
-    trace[i][0] = 0;
-  }
+  rewind(fp1);
+  rewind(fp2);
 
   for (int i = 1; i < ln1+1; i++)
   {
@@ -394,33 +397,39 @@ int diff (int size, char** args)
     {
       fgets(line2, buffer_size, fp2);
       text2[j] = line2;
-      printf("line1: %sline2: %s", line1, line2);
+      //printf("%s\n----\n%s\n", line1, line2);
+      //printf("line1: %sline2: %s", line1, line2);
       int cmp = strcmp(line1, line2);
       if (cmp == 0)
       {
-        //printf("same\n");
+        printf("same\n");
         trace[i][j] = diag;
         lcs_length[i][j] = lcs_length[i-1][j-1] + 1;
+        printf("%d ", lcs_length[i][j]);
       }
       else if (lcs_length[i-1][j] >= lcs_length[i][j-1])
       {
-        //printf("up\n");
+        printf("up\n");
         lcs_length[i][j] = lcs_length[i-1][j];
+        printf("%d ", lcs_length[i][j]);
         trace[i][j] = up;
       }
       else
       {
-        //printf("left\n");
+        printf("left\n");
         lcs_length[i][j] = lcs_length[i][j-1];
+        printf("%d ", lcs_length[i][j]);
         trace[i][j] = left;
       }
     }
+    printf("\n");
   }
 
   int index_i = ln1+1;
   int index_j = ln2+1;
   char output[(ln1 > ln2) ? ln1 : ln2][buffer_size];
 
+  printf("%d\n", trace[index_i][index_j]);
   while (trace[index_i][index_j] != 0)
   {
     int direction = trace[index_i][index_j];
@@ -438,6 +447,7 @@ int diff (int size, char** args)
     }
     else
     {
+      printf("here\n");
       output[(ln1 < ln2) ? ln1 : ln2][0] = '\0';
       index_i--;
       index_j--;
