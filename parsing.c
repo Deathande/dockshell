@@ -45,23 +45,30 @@ int skip_whitespace(char* str, int pos)
 
 void parse(char** toks, unsigned int size)
 {
+ /* 
+  * Indicies of strings and corresponding function 
+  * must line up.
+  */
   char* commands[15] = {
     "cat", "ls", "cp", "grep", "clear", 
     "cd", "mkdir", "rmdir", "stat", "sleep", 
     "env", "kill", "timeout", "diff", "wait"
   };
+  /* Array of function pointers */
   int (*function[15])(int, char**) = {
     &cat, &ls, &cp, &grep, &clear,
     &cd, &mkdir_builtin, &rmdir_builtin, &stat_builtin, &sleep_builtin,
     &env, &kill_builtin, &timeout, &diff, &wait_builtin
   };
 
+  /* Exit does not follow the same argument pattern */
   if (strcmp(toks[0], "exit") == 0)
   {
     printf("exit\n");
     exit(0);
   }
 
+ /* Linear search for the appropriate built in command */
   for (int i = 0; i < 16; i++)
   {
     if (strcmp(toks[0], commands[i]) == 0)
