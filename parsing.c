@@ -45,69 +45,30 @@ int skip_whitespace(char* str, int pos)
 
 void parse(char** toks, unsigned int size)
 {
-  if (strcmp(toks[0], "cat") == 0)
-  {
-    cat(size, toks);
-  }
-  else if (strcmp(toks[0], "ls") == 0)
-  {
-    ls(size, toks);
-  }
-  else if (strcmp(toks[0], "cp") == 0)
-  {
-    cp(size, toks);
-  }
-  else if (strcmp(toks[0], "grep") == 0)
-  {
-    grep(size, toks);
-  }
-  else if (strcmp(toks[0], "clear") == 0)
-  {
-    clear(size, toks);
-  }
-  else if (strcmp(toks[0], "exit") == 0)
+  char* commands[15] = {
+    "cat", "ls", "cp", "grep", "clear", 
+    "cd", "mkdir", "rmdir", "stat", "sleep", 
+    "env", "kill", "timeout", "diff", "wait"
+  };
+  int (*function[15])(int, char**) = {
+    &cat, &ls, &cp, &grep, &clear,
+    &cd, &mkdir_builtin, &rmdir_builtin, &stat_builtin, &sleep_builtin,
+    &env, &kill_builtin, &timeout, &diff, &wait_builtin
+  };
+
+  if (strcmp(toks[0], "exit") == 0)
   {
     printf("exit\n");
     exit(0);
   }
-  else if (strcmp(toks[0], "cd") == 0)
+
+  for (int i = 0; i < 16; i++)
   {
-    cd(size, toks);
+    if (strcmp(toks[0], commands[i]) == 0)
+    {
+      function[i](size, toks);
+      return;
+    }
   }
-  else if (strcmp(toks[0], "mkdir") == 0)
-  {
-    mkdir_builtin(size, toks);
-  }
-  else if (strcmp(toks[0], "rmdir") == 0)
-  {
-    rmdir_builtin(size, toks);
-  }
-  else if (strcmp(toks[0], "stat") == 0)
-  {
-    stat_builtin(size, toks);
-  }
-  else if (strcmp(toks[0], "sleep") == 0)
-  {
-    sleep_builtin(size, toks);
-  }
-  else if (strcmp(toks[0], "env") == 0)
-  {
-     env(size, toks);
-  }
-  else if (strcmp(toks[0], "kill") == 0)
-  {
-    kill_builtin(size, toks);
-  }
-  else if (strcmp(toks[0], "timeout") == 0)
-  {
-    timeout(size, toks);
-  }
-  else if (strcmp(toks[0], "diff") == 0)
-  {
-    diff(size, toks);
-  }
-  else
-  {
-    printf("Unknwon command\n");
-  }
+  printf("Unknown command");
 }

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <sys/stat.h>
 #include <dirent.h>
 #include <unistd.h>
@@ -28,7 +29,7 @@ int stat_builtin  (int num_args, char** args);
 int diff          (int num_args, char** args);
 int env           (int num_args, char** args);
 int timeout       (int num_args, char** args);
-//int wait    (int num_args, char** args);
+int wait_builtin    (int num_args, char** args);
 int sleep_builtin   (int num_args, char** args);
 int kill_builtin    (int num_args, char** args);
 
