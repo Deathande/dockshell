@@ -291,41 +291,38 @@ int kill_builtin(int size, char** args)
   return kill(pid, SIGKILL);
 }
 
-// TODO: Needs work
 int timeout(int size, char** args)
 {
   pid_t pid = fork();
   if (pid == 0)
   {
     // child
-    exit(0);
     char* child_args[50];
     for (int i = 2; i < size; i++)
     {
       child_args[i-2] = args[i];
-      printf("%s\n", child_args[i-2]);
     }
     parse(child_args, size - 2);
-    while (1) {}
+    exit(0);
   }
   else
   {
     // parent
     int time;
     time = strtol(args[1], NULL, 10);
-    sleep(time);
-    int status;
-    pid_t c_status = waitpid(pid, &status, WNOHANG);
-    printf("c_status: %d\n", c_status);
-    printf("status: %d\n", status);
-    if (c_status == 0)
+    for (int i = 0; i < time; i++)
     {
-      kill(pid);
-      printf("Child terminated\n");
+      sleep(1);
+      int status;
+      pid_t c_status = waitpid(pid, &status, WNOHANG);
+      if (WIFEXITED(status))
+      {
+        status = 100;
+        return 0;
+      }
     }
+    kill(pid, SIGKILL);
   }
-  if (pid == 0)
-    printf("here\n");
   return 0;
 }
 
@@ -467,6 +464,7 @@ int wait_builtin(int size, char** args)
   int pid = strtol(args[1], NULL, 10);
   int status;
   printf("%d\n", pid);
+  printf("%d\n", WNOHANG);
   return waitpid(pid, &status, 0);
   printf("%d\n", status);
 }
