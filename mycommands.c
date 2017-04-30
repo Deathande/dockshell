@@ -127,6 +127,8 @@ int cd (int size, char** args)
     printf("too few arguments");
     return 0;
   }
+  if (strtok(args[1], "~") == 0)
+    args[1] = getenv("HOME");
   if(chdir(args[1]) < 0)
     return 1;
   return 0;
