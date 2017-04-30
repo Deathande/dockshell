@@ -1,5 +1,7 @@
 #include "mycommands.h"
 
+extern char** environ;
+
 int ls(int num_args, char** args)
 {
   DIR* directory;
@@ -209,75 +211,9 @@ int sleep_builtin(int size, char** args)
 
 int env( int num_args, char** args)
 {
-  char commands[60][50] = {
-    "LD_LIBRARY_PATH\0",
-    "CSF_UnitsDefinition\0",
-    "CSF_GraphicShr\0",
-    "TERMINATOR_UUID\0",
-    "ANDROID_HOME\0",
-    "XDG_MENU_PREFIX\0",
-    "CSF_EXCEPTION_PROMPT\0",
-    "LANG\0",
-    "DISPLAY\0",
-    "OLDPWD\0",
-    "COLORTERM\0",
-    "MOZ_PLUGIN_PATH\0",
-    "CSF_IGESDefaults\0",
-    "CSF_XCAFDefaults\0",
-    "XDG_VTNR\0",
-    "GIO_LAUNCHED_DESKTOP_FILE_PID\0",
-    "SSH_AUTH_SOCK\0",
-    "CSF_STEPDefaults\0",
-    "XDG_SESSION_ID\0",
-    "CSF_XSMessage\0",
-    "USER\0",
-    "QT_QPA_PLATFORMTHEME\0",
-    "PWD\0",
-    "HOME\0",
-    "TMUX\0",
-    "CSF_PluginDefaults\0",
-    "XDG_DATA_DIRS\0",
-    "TERMINATOR_DBUS_NAME\0",
-    "CSF_StandardDefaults\0",
-    "GJS_DEBUG_OUTPUT\0",
-    "CSF_StandardLiteDefaults\0",
-    "MMGT_CLEAR\0",
-    "CSF_UnitsLexicon\0",
-    "GTK_MODULES\0",
-    "TERMINATOR_DBUS_PATH\0",
-    "MAIL\0",
-    "WINDOWPATH\0",
-    "CSF_XmlOcafResource\0",
-    "VTE_VERSION\0",
-    "TERM\0",
-    "SHELL\0",
-    "XDG_CURRENT_DESKTOP\0",
-    "ANDROID_SWT\0",
-    "CASROOT\0",
-    "GIO_LAUNCHED_DESKTOP_FILE\0",
-    "TMUX_PANE\0",
-    "XDG_SEAT\0",
-    "SHLVL\0",
-    "GNOME_DESKTOP_SESSION_ID\0",
-    "LOGNAME\0",
-    "DBUS_SESSION_BUS_ADDRESS\0",
-    "XDG_RUNTIME_DIR\0",
-    "CSF_MDTVTexturesDirectory\0",
-    "XAUTHORITY\0",
-    "PATH\0",
-    "CSF_LANGUAGE\0",
-    "GJS_DEBUG_TOPICS\0",
-    "SESSION_MANAGER\0",
-    "CSF_SHMessage\0",
-    "_\0"
-  };
-  char* out;
-
-  for(int i = 0; i < 60; i++)
-  {
-    out = getenv(commands[i]);
-    printf("%s=%s\n", commands[i], out);
-  }
+  int i = 0;
+  while (environ[i])
+    printf("%s\n", environ[i++]);
   return 0;
 }
 
@@ -368,8 +304,8 @@ int diff (int size, char** args)
 
   unsigned int lcs_length[ln1+1][ln2+1];
   unsigned int trace[ln1+1][ln2+1];
-  char* text1[ln1];
-  char* text2[ln2];
+  char text1[ln1][200];
+  char text2[ln2][200];
 
   // fp1 is top
   for (int i = 0; i < ln1+1; i++)
@@ -391,13 +327,13 @@ int diff (int size, char** args)
   for (int i = 1; i < ln1+1; i++)
   {
     fgets(line1, buffer_size, fp1);
-    text1[i] = line1;
+    strcpy(text1[i-1], line1);
+    //text1[i-1] = line1;
     for (int j = 1; j < ln2+1; j++)
     {
       fgets(line2, buffer_size, fp2);
-      text2[j] = line2;
-      //printf("%s\n----\n%s\n", line1, line2);
-      //printf("line1: %sline2: %s", line1, line2);
+      //text2[j-1] = line2;
+      strcpy(text2[j-1], line2);
       int cmp = strcmp(line1, line2);
       if (cmp == 0)
       {
@@ -414,15 +350,15 @@ int diff (int size, char** args)
       else
       {
         lcs_length[i][j] = lcs_length[i][j-1];
-        printf("%d ", lcs_length[i][j]);
+        //printf("%d ", lcs_length[i][j]);
         trace[i][j] = left;
       }
     }
     printf("\n");
   }
 
-  int index_i = ln1+1;
-  int index_j = ln2+1;
+  int index_i = ln1;
+  int index_j = ln2;
   char output[(ln1 > ln2) ? ln1 : ln2][buffer_size];
 
   while (trace[index_i][index_j] != 0)
@@ -430,13 +366,15 @@ int diff (int size, char** args)
     int direction = trace[index_i][index_j];
     if (direction == up)
     {
-      printf("%s\n-----\n%s\n\n", text1[index_i], text2[index_j]);
+      //printf("i: %d j: %d\n", index_i, index_j);
+      printf("%s\n-----\n%s\n\n", text1[index_i-1], text2[index_j-1]);
       //sprintf(output[(ln1 < ln2) ? ln1 : ln2], "%s\n---%s\n", text1[index_i], text2[index_j]);
       index_i--;
     }
     else if (direction == left)
     {
-      printf("%s\n-----%s\n", text1[index_i], text2[index_j]);
+      //printf("i: %d j: %d\n", index_i, index_j);
+      printf("%s\n-----%s\n", text1[index_i-1], text2[index_j-1]);
       //sprintf(output[(ln1 < ln2) ? ln1 : ln2], "%s\n---%s\n", text1[index_i], text2[index_j]);
       index_j--;
     }
