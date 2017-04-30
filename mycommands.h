@@ -32,5 +32,6 @@ int timeout       (int num_args, char** args);
 int wait_builtin    (int num_args, char** args);
 int sleep_builtin   (int num_args, char** args);
 int kill_builtin    (int num_args, char** args);
+int fork_test (int, char**);
 
 #endif

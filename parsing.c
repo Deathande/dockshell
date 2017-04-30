@@ -49,16 +49,17 @@ void parse(char** toks, unsigned int size)
   * Indicies of strings and corresponding function 
   * must line up.
   */
-  char* commands[15] = {
+  char* commands[16] = {
     "cat", "ls", "cp", "grep", "clear", 
     "cd", "mkdir", "rmdir", "stat", "sleep", 
-    "env", "kill", "timeout", "diff", "wait"
+    "env", "kill", "timeout", "diff", "wait",
+    "fork_test"
   };
   /* Array of function pointers */
-  int (*function[15])(int, char**) = {
+  int (*function[16])(int, char**) = {
     &cat, &ls, &cp, &grep, &clear,
     &cd, &mkdir_builtin, &rmdir_builtin, &stat_builtin, &sleep_builtin,
-    &env, &kill_builtin, &timeout, &diff, &wait_builtin
+    &env, &kill_builtin, &timeout, &diff, &wait_builtin, &fork_test
   };
 
   /* Exit does not follow the same argument pattern */
@@ -69,7 +70,7 @@ void parse(char** toks, unsigned int size)
   }
 
  /* Linear search for the appropriate built in command */
-  for (int i = 0; i < 15; i++)
+  for (int i = 0; i < 16; i++)
   {
     if (strcmp(toks[0], commands[i]) == 0)
     {

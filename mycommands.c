@@ -322,17 +322,15 @@ int diff (int size, char** args)
   }
 
   rewind(fp1);
-  rewind(fp2);
 
   for (int i = 1; i < ln1+1; i++)
   {
     fgets(line1, buffer_size, fp1);
     strcpy(text1[i-1], line1);
-    //text1[i-1] = line1;
+    rewind(fp2);
     for (int j = 1; j < ln2+1; j++)
     {
       fgets(line2, buffer_size, fp2);
-      //text2[j-1] = line2;
       strcpy(text2[j-1], line2);
       int cmp = strcmp(line1, line2);
       if (cmp == 0)
@@ -350,7 +348,6 @@ int diff (int size, char** args)
       else
       {
         lcs_length[i][j] = lcs_length[i][j-1];
-        //printf("%d ", lcs_length[i][j]);
         trace[i][j] = left;
       }
     }
@@ -368,14 +365,14 @@ int diff (int size, char** args)
     {
       //printf("i: %d j: %d\n", index_i, index_j);
       printf("%s\n-----\n%s\n\n", text1[index_i-1], text2[index_j-1]);
-      //sprintf(output[(ln1 < ln2) ? ln1 : ln2], "%s\n---%s\n", text1[index_i], text2[index_j]);
+      //sprintf(output[(ln1 < ln2) ? ln1 : ln2], "%s\n---\n%s\n", text1[index_i-1], text2[index_j-1]);
       index_i--;
     }
     else if (direction == left)
     {
       //printf("i: %d j: %d\n", index_i, index_j);
       printf("%s\n-----%s\n", text1[index_i-1], text2[index_j-1]);
-      //sprintf(output[(ln1 < ln2) ? ln1 : ln2], "%s\n---%s\n", text1[index_i], text2[index_j]);
+      //sprintf(output[(ln1 < ln2) ? ln1 : ln2], "%s\n---\n%s\n", text1[index_i-1], text2[index_j-1]);
       index_j--;
     }
     else
@@ -394,6 +391,19 @@ int diff (int size, char** args)
   return 0;
 }
 
+int fork_test(int size, char** args)
+{
+  pid_t pid = fork();
+  if (pid != 0)
+    printf("%d\n", pid);
+  else
+  {
+    sleep(10);
+    exit(0);
+  }
+  return 0;
+}
+
 int wait_builtin(int size, char** args)
 {
   if (size < 2)
@@ -403,8 +413,9 @@ int wait_builtin(int size, char** args)
   }
   int pid = strtol(args[1], NULL, 10);
   int status;
-  printf("%d\n", pid);
-  printf("%d\n", WNOHANG);
-  return waitpid(pid, &status, 0);
+  //printf("%d\n", pid);
+  //printf("%d\n", WNOHANG);
+  waitpid(pid, &status, 0);
   printf("%d\n", status);
+  return 0;
 }
