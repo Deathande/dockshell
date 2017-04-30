@@ -69,7 +69,7 @@ void parse(char** toks, unsigned int size)
   }
 
  /* Linear search for the appropriate built in command */
-  for (int i = 0; i < 16; i++)
+  for (int i = 0; i < 15; i++)
   {
     if (strcmp(toks[0], commands[i]) == 0)
     {
@@ -77,5 +77,5 @@ void parse(char** toks, unsigned int size)
       return;
     }
   }
-  printf("Unknown command");
+  printf("Unknown command\n");
 }
