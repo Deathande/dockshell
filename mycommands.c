@@ -252,7 +252,7 @@ int timeout(int size, char** args)
     {
       sleep(1);
       int status;
-      pid_t c_status = waitpid(pid, &status, WNOHANG);
+      waitpid(pid, &status, WNOHANG);
       if (WIFEXITED(status))
       {
         status = 100;
@@ -412,10 +412,8 @@ int wait_builtin(int size, char** args)
     return 0;
   }
   int pid = strtol(args[1], NULL, 10);
-  int status;
-  //printf("%d\n", pid);
-  //printf("%d\n", WNOHANG);
+  int status = 0;
   waitpid(pid, &status, 0);
-  printf("%d\n", status);
+  //printf("%d\n", WIFEXITED(status));
   return 0;
 }

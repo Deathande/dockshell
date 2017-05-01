@@ -64,10 +64,7 @@ void parse(char** toks, unsigned int size)
 
   /* Exit does not follow the same argument pattern */
   if (strcmp(toks[0], "exit") == 0)
-  {
-    printf("exit\n");
     exit(0);
-  }
 
  /* Linear search for the appropriate built in command */
   for (int i = 0; i < 16; i++)

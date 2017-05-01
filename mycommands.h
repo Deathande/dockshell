@@ -1,6 +1,7 @@
 #ifndef __MY_COMMANDS
 #define __MY_COMMANDS
 
+#define _POSIX_SOURCE
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
