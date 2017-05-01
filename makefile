@@ -4,7 +4,7 @@ LFLAGS=
 
 all: docksh
 
-docksh: main.o mycommands.o parsing.o
+docksh: main.o mycommands.o parsing.o helpers.o
 	$(CC) $(LFLAGS) $+ -o $@
 
 main.o: main.c
@@ -14,6 +14,9 @@ mycommands.o: mycommands.c mycommands.h
 	$(CC) -c $(CFLAGS) $<
 
 parsing.o: parsing.c parsing.h
+	$(CC) -c $(CFLAGS) $<
+
+helpers.o: helpers.c helpers.h
 	$(CC) -c $(CFLAGS) $<
 
 test: parsing.o mycommands.o test.o

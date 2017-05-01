@@ -16,6 +16,7 @@
 #include <pwd.h>
 #include <grp.h>
 #include "parsing.h"
+#include "helpers.h"
 
 #ifdef HAVE_ST_BIRTHTIME
 #define birthtime(x) x->st_birthtime

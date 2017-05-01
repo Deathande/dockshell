@@ -291,120 +291,90 @@ int diff (int size, char** args)
   }
 
   const unsigned int buffer_size = 512;
-  const unsigned int up          = 1;
-  const unsigned int left        = 2;
-  const unsigned int diag        = 3;
 
   FILE* fp1;
   FILE* fp2;
   unsigned int ln1 = 0;
   unsigned int ln2 = 0;
-  char line1[buffer_size];
-  char line2[buffer_size];
+  char** text1;
+  char** text2;
 
   fp1 = fopen(args[1], "r");
   fp2 = fopen(args[2], "r");
+
   if (fp1 == NULL)
   {
-    printf("Error opening %s\n", args[1]);
-    return -1;
+    printf("Error opening file: %s", args[1]);
+    return 1;
   }
+
   if (fp2 == NULL)
   {
-    printf("Error opening %s\n", args[2]);
-    return -1;
+    printf("Error opening file: %s", args[2]);
+    return 1;
   }
 
-  while (fgets(line1, buffer_size, fp1))
+  text1 = malloc(sizeof(char*) * 500);
+  text2 = malloc(sizeof(char*) * 500);
+
+  for (int i = 0; i < 500; i++)
+  {
+    text1[i] = malloc(sizeof(char) * buffer_size);
+    text2[i] = malloc(sizeof(char) * buffer_size);
+  }
+  
+  while (fgets(text1[ln1], buffer_size, fp1))
     ln1++;
-  while (fgets(line1, buffer_size, fp2))
+  while(fgets(text2[ln2], buffer_size, fp2))
     ln2++;
 
-  unsigned int lcs_length[ln1+1][ln2+1];
-  unsigned int trace[ln1+1][ln2+1];
-  char text1[ln1][200];
-  char text2[ln2][200];
+  int** lcs_len;
 
-  // fp1 is top
+  lcs_len = malloc(sizeof(int*) * ln1+1);
   for (int i = 0; i < ln1+1; i++)
-  {
-    lcs_length[i][0] = 0;
-    trace[i][0] = 0;
-  }
+    lcs_len[i] = malloc(sizeof(int) * ln2+1);
 
-  // fp2 is left
+  for (int i = 0; i < ln1+1; i++)
+    lcs_len[0][i] = 0;
   for (int i = 0; i < ln2+1; i++)
-  {
-    lcs_length[0][i] = 0;
-    trace[0][i] = 0;
-  }
-
-  rewind(fp1);
+    lcs_len[i][0] = 0;
 
   for (int i = 1; i < ln1+1; i++)
   {
-    fgets(line1, buffer_size, fp1);
-    strcpy(text1[i-1], line1);
-    rewind(fp2);
     for (int j = 1; j < ln2+1; j++)
     {
-      fgets(line2, buffer_size, fp2);
-      strcpy(text2[j-1], line2);
-      int cmp = strcmp(line1, line2);
+      int cmp = strcmp(text1[i-1], text2[j-1]);
       if (cmp == 0)
       {
-        trace[i][j] = diag;
-        lcs_length[i][j] = lcs_length[i-1][j-1] + 1;
-        printf("%d ", lcs_length[i][j]);
-      }
-      else if (lcs_length[i-1][j] >= lcs_length[i][j-1])
-      {
-        lcs_length[i][j] = lcs_length[i-1][j];
-        printf("%d ", lcs_length[i][j]);
-        trace[i][j] = up;
+        lcs_len[i][j] = lcs_len[i-1][j-1]+1;
       }
       else
       {
-        lcs_length[i][j] = lcs_length[i][j-1];
-        trace[i][j] = left;
+        if (lcs_len[i-1][j] < lcs_len[i][j-1])
+        {
+          lcs_len[i][j] = lcs_len[i][j-1];
+        }
+        else
+        {
+          lcs_len[i][j] = lcs_len[i-1][j];
+        }
       }
+    }
+  }
+
+  /* Output table */
+  for (int i = 0; i < ln1+1; i++)
+  {
+    for (int j = 0; j < ln2+1; j++)
+    {
+      printf("%d ", lcs_len[i][j]);
     }
     printf("\n");
   }
 
-  int index_i = ln1;
-  int index_j = ln2;
-  char output[(ln1 > ln2) ? ln1 : ln2][buffer_size];
+  printf("\n");
 
-  while (trace[index_i][index_j] != 0)
-  {
-    int direction = trace[index_i][index_j];
-    if (direction == up)
-    {
-      //printf("i: %d j: %d\n", index_i, index_j);
-      printf("%s\n-----\n%s\n\n", text1[index_i-1], text2[index_j-1]);
-      //sprintf(output[(ln1 < ln2) ? ln1 : ln2], "%s\n---\n%s\n", text1[index_i-1], text2[index_j-1]);
-      index_i--;
-    }
-    else if (direction == left)
-    {
-      //printf("i: %d j: %d\n", index_i, index_j);
-      printf("%s\n-----%s\n", text1[index_i-1], text2[index_j-1]);
-      //sprintf(output[(ln1 < ln2) ? ln1 : ln2], "%s\n---\n%s\n", text1[index_i-1], text2[index_j-1]);
-      index_j--;
-    }
-    else
-    {
-      //printf("here\n");
-      //output[(ln1 < ln2) ? ln1 : ln2][0] = '\0';
-      index_i--;
-      index_j--;
-    }
-  }
-
-  printf("%d\n", (ln1 > ln2) ? ln1:ln2);
-  for (int i = (ln1 > ln2) ? ln1 : ln2; i > 0; i--)
-    printf("%s", output[i]);
+  print_table(lcs_len, text1, text2, ln1, ln2);
 
   return 0;
 }
