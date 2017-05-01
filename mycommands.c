@@ -363,16 +363,14 @@ int diff (int size, char** args)
   }
 
   /* Output table */
-  for (int i = 0; i < ln1+1; i++)
+  /*for (int i = 0; i < ln1+1; i++)
   {
     for (int j = 0; j < ln2+1; j++)
     {
       printf("%d ", lcs_len[i][j]);
     }
     printf("\n");
-  }
-
-  printf("\n");
+  }*/
 
   print_table(lcs_len, text1, text2, ln1, ln2);
 
