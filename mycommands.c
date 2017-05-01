@@ -169,6 +169,7 @@ int rmdir_builtin (int size, char** args)
 int stat_builtin (int size, char** args)
 {
   struct stat* buffer;
+  char time_b[26];
   buffer = malloc(sizeof(struct stat));
   if (size < 2)
   {
@@ -180,20 +181,37 @@ int stat_builtin (int size, char** args)
     printf("could not retrieve file info\n");
     return -1;
   }
-  /*printf("File: %s\n
-          Size: %d            Blocks: %d           IO Blocks: %d\n
-          Device: %");*/
   printf("File: %s\n", args[1]);
-  printf("Size: %d Blocks: %d IO Blocks: %d\n",
+  printf("Size: %d\tBlocks: %d\tIO Blocks: %d\n",
          (int)buffer->st_size, 
          (int)buffer->st_blocks,
          (int)buffer->st_blksize);
-  printf("Device: %d Inode: %d Links: %d\n",
+  printf("Device: %d\tInode: %d\tLinks: %d\n",
           (int)buffer->st_dev,
           (int)buffer->st_ino,
           (int)buffer->st_nlink);
-  printf("Access:\n");
-  // TODO: More to this...
+  printf("Access:");
+  printf((S_ISDIR(buffer->st_mode)) ? "d" : "-");
+  printf( (buffer->st_mode & S_IRUSR) ? "r" : "-");
+  printf( (buffer->st_mode & S_IWUSR) ? "w" : "-");
+  printf( (buffer->st_mode & S_IXUSR) ? "x" : "-");
+  printf( (buffer->st_mode & S_IRGRP) ? "r" : "-");
+  printf( (buffer->st_mode & S_IWGRP) ? "w" : "-");
+  printf( (buffer->st_mode & S_IXGRP) ? "x" : "-");
+  printf( (buffer->st_mode & S_IROTH) ? "r" : "-");
+  printf( (buffer->st_mode & S_IWOTH) ? "w" : "-");
+  printf( (buffer->st_mode & S_IXOTH) ? "x" : "-");
+  printf("  Uid: (%d/%s) ", buffer->st_uid, (char*)getpwuid(buffer->st_uid)->pw_name);
+  printf("  Gid: (%d/%s)", buffer->st_gid, (char*)getgrgid(buffer->st_gid)->gr_name);
+  printf("\n");
+  strftime(time_b, 26, "%Y-%m-%d %H:%M:%S", localtime(&buffer->st_atime));
+  printf("Access: %s\n", time_b);
+  strftime(time_b, 26, "%Y-%m-%d %H:%M:%S", localtime(&buffer->st_mtime));
+  printf("Modify: %s\n", time_b);
+  strftime(time_b, 26, "%Y-%m-%d %H:%M:%S", localtime(&buffer->st_ctime));
+  printf("Change: %s\n", time_b);
+  printf("Birth: %d\n", (int)birthtime(buffer));
+
   return 0;
 }
 

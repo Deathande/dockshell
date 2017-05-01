@@ -1,7 +1,6 @@
 #ifndef __MY_COMMANDS
 #define __MY_COMMANDS
 
-#define _POSIX_SOURCE
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
@@ -13,7 +12,16 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <time.h>
+#include <pwd.h>
+#include <grp.h>
 #include "parsing.h"
+
+#ifdef HAVE_ST_BIRTHTIME
+#define birthtime(x) x->st_birthtime
+#else
+#define birthtime(x) x->st_ctime
+#endif
 
 /* Phase 1 */
 int cat     (int num_args, char** args);
@@ -33,6 +41,12 @@ int timeout       (int num_args, char** args);
 int wait_builtin    (int num_args, char** args);
 int sleep_builtin   (int num_args, char** args);
 int kill_builtin    (int num_args, char** args);
-int fork_test (int, char**);
+
+/* Extra function to test wait with. */
+/* Wait will only wait for child processes, so */
+/* This command starts a child process that sleeps */
+/* for 10 then exits. The pid of the child process is */
+/* printed and can be given as the first argument to wait. */
+int fork_test       (int, char**);
 
 #endif
