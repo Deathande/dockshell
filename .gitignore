@@ -2,3 +2,15 @@
 docksh # old name
 dsh    # new name
 *.o
+Makefile
+SystemsPaper2.odt
+autom4te.cache/
+config.h
+config.h.in
+config.h.in~
+config.log
+config.status
+src/.deps/
+src/Makefile
+stamp-h1
+src/dsh

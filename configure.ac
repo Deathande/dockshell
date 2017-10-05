@@ -1,4 +1,4 @@
-AC_INIT([dockshell], [1.0], [dockconnellyoneal@gmail.com])
+AC_INIT([dsh], [1.0], [dockconnellyoneal@gmail.com])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 AC_PROG_CC
 AC_PROG_CC_STDC
