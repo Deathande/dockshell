@@ -1,0 +1,4 @@
+language: C
+os: linux
+script: autoreconf --force --install && ./configure && make
+compiler: gcc
